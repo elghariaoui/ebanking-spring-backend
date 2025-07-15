@@ -39,7 +39,10 @@ Si vous utilisez H2, aucune configuration supplémentaire n'est nécessaire car 
 ## Fonctionnalités
 
 - Gestion des comptes avec CRUD (Create, Read, Update, Delete)
-- API RESTful pour interagir avec les produits
+- API RESTful pour interagir avec les comptes et les opérations bancaires. Utilisez un client HTTP ou un outil comme Postman pour tester les endpoints.
+
+http://localhost:9085/swagger-ui/index.html
+
 - Intégration avec Spring Data JPA pour la persistance des données
 - Utilisation des DTOs pour la validation des données
 - Documentation de l'API avec Swagger
