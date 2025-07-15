@@ -6,6 +6,7 @@ import net.soufiane.ebankingbackend.Exceptions.CustomerNotFoundException;
 import net.soufiane.ebankingbackend.dtos.CustomerDTO;
 import net.soufiane.ebankingbackend.entities.Customer;
 import net.soufiane.ebankingbackend.services.BankAccountService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CustomerRestController {
     private BankAccountService bankAccountService;
 
     @GetMapping("/customers")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> getCustomers() {
         log.info("Fetching all customers");
         List<CustomerDTO> customers = bankAccountService.getAllCustomers();
@@ -33,17 +35,20 @@ public class CustomerRestController {
 
 
     @GetMapping("/customers/search")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public List<CustomerDTO> searchCustomers(@RequestParam (name = "keyword", defaultValue = "") String keyword) {
         return bankAccountService.searchCustomers("%"+keyword+"%");
     }
 
     @GetMapping("/customers/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public CustomerDTO getCustomerById(@PathVariable(name = "id") Long customerId) throws CustomerNotFoundException {
         log.info("Fetching customer with ID: {}", customerId);
         return bankAccountService.getCustomer(customerId);
     }
 
     @PostMapping("/customers")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO addCustomer(@RequestBody CustomerDTO customerDTO) throws CustomerNotFoundException {
         log.info("Adding new customer: {}", customerDTO.getName());
         CustomerDTO customer = bankAccountService.saveCustomer(customerDTO);
@@ -52,6 +57,7 @@ public class CustomerRestController {
     }
 
     @PutMapping("/customers/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CustomerDTO updateCustomer(@PathVariable(name = "id") Long customerId, @RequestBody CustomerDTO customerDTO) throws CustomerNotFoundException {
         log.info("Updating customer with ID: {}", customerId);
         customerDTO.setId(customerId);
@@ -61,6 +67,7 @@ public class CustomerRestController {
     }
 
     @DeleteMapping("/customers/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
         log.info("Deleting customer with ID: {}", id);
         bankAccountService.deleteCustomer(id);

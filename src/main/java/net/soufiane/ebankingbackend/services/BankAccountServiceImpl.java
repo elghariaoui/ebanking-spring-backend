@@ -232,17 +232,19 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("Get account history for account ID: {}", bankAccountId);
         BankAccount bankAccount = bankAccountRepository.findById(bankAccountId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
-        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(bankAccountId, PageRequest.of(page, size));
+        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(bankAccountId, PageRequest.of(page, size));
         AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
-        List<AccountOperationDTO> accountOperationDTOS =  accountOperations.getContent().stream().map(op -> {
+        /*List<AccountOperationDTO> accountOperationDTOS =  accountOperations.getContent().stream().map(op -> {
             AccountOperationDTO accountOperationDTO = dtoMapper.fromAccountOperation(op);
             return accountOperationDTO;
         }).collect(Collectors.toList());
+
+*/      List<AccountOperationDTO> accountOperationDTOS = accountOperations.getContent().stream().map(op -> dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
         accountHistoryDTO.setAccountOperationDTOs(accountOperationDTOS);
         accountHistoryDTO.setAccountId(bankAccountId);
         accountHistoryDTO.setBalance(bankAccount.getBalance());
-        accountHistoryDTO.setPageSize(page);
-        accountHistoryDTO.setCurrentPage(accountOperations.getNumber());
+        accountHistoryDTO.setPageSize(size);
+        accountHistoryDTO.setCurrentPage(page);
         accountHistoryDTO.setTotalPages(accountOperations.getTotalPages());
         return accountHistoryDTO;
 
